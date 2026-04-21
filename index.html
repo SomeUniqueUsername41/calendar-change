@@ -47,6 +47,7 @@
       <option value="american">American Independence Calendar</option>
       <option value="spaceflight">Spaceflight Calendar</option>
       <option value="neptune">Neptune Discovery Calendar</option>
+      <option value="proximacentauri">Proxima Centauri Discovery Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers or dates:</label>
@@ -79,7 +80,13 @@
     <br>
     NA - Neptune Awareness
     <br>
-    BND - Before Neptune Discovery</p>
+    BND - Before Neptune Discovery
+    <br>
+    Proxima Centauri Discovery Calendar:
+    <br>
+    PCA - Proxima Centauri Awareness
+    <br>
+    BD - Before Discovery</p>
   </div>
 
   <script>
@@ -111,6 +118,12 @@
         afterAbbr: "NA",
         beforeAbbr: "BND",
         aliases: ["NA", "BND"]
+      },
+      proximacentauri: {
+        anchor: 1915,
+        afterAbbr: "PCA",
+        beforeAbbr: "BD",
+        aliases: ["PCA", "BD"]
       }
     };
 
@@ -146,11 +159,14 @@
       if (abbr === "NA") return 1846 + num;
       if (abbr === "BND") return 1846 - num;
 
+      if (abbr === "PCA") return 1915 + num;
+      if (abbr === "BD") return 1915 - num;
+
       return NaN;
     }
 
     function normalizeCustomYearsToGregorian(text) {
-      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST|NA|BND)\b/g, (match, num, abbr) => {
+      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST|NA|BND|PCA|BD)\b/g, (match, num, abbr) => {
         const gregorianYear = gregorianFromCustomYear(parseInt(num, 10), abbr);
         return Number.isNaN(gregorianYear) ? match : String(gregorianYear);
       });
