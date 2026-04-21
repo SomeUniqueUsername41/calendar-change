@@ -46,6 +46,7 @@
       <option value="moon">Moon Landing Calendar</option>
       <option value="american">American Independence Calendar</option>
       <option value="spaceflight">Spaceflight Calendar</option>
+      <option value="neptune">Neptune Discovery Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers or dates:</label>
@@ -73,6 +74,12 @@
     STE - Spacetravel Era
     <br>
     BST - Before Spacetravel</p>
+    <br><br>
+    Neptune Discovery Calendar:
+    <br>
+    NA - Neptune Awareness
+    <br>
+    BND - Before Neptune Discovery</p>
   </div>
 
   <script>
@@ -98,6 +105,12 @@
         afterAbbr: "STE",
         beforeAbbr: "BST",
         aliases: ["STE", "BST"]
+      },
+      neptune: {
+        anchor: 1846,
+        afterAbbr: "NA",
+        beforeAbbr: "BND",
+        aliases: ["NA", "BND"]
       }
     };
 
@@ -130,11 +143,14 @@
       if (abbr === "STE") return 1961 + num;
       if (abbr === "BST") return 1961 - num;
 
+      if (abbr === "NA") return 1846 + num;
+      if (abbr === "BND") return 1846 - num;
+
       return NaN;
     }
 
     function normalizeCustomYearsToGregorian(text) {
-      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST)\b/g, (match, num, abbr) => {
+      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST|NA|BND)\b/g, (match, num, abbr) => {
         const gregorianYear = gregorianFromCustomYear(parseInt(num, 10), abbr);
         return Number.isNaN(gregorianYear) ? match : String(gregorianYear);
       });
