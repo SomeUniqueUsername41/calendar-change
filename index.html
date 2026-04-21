@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Calendar-Altering Tool</title>
+  <style>
+    body {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      max-width: 600px;
+      width: 100%;
+    }
+    textarea {
+      margin-top: 2px;
+      width: 100%;
+      height: 120px;
+      font-size: 21px;
+      resize: both;
+      overflow: auto;
+      box-sizing: border-box;
+    }
+    label {
+      margin-top: 10px;
+      margin-bottom: 5px;
+      align-self: flex-start;
+    }
+    select {
+      margin-bottom: 10px;
+      width: 100%;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <label for="calendar-select">Select calendar:</label>
+    <select id="calendar-select">
+      <option value="">-select calendar-</option>
+      <option value="moon">Moon Landing Calendar</option>
+      <option value="american">American Independence Calendar</option>
+      <option value="spaceflight">Spaceflight Calendar</option>
+    </select>
+
+    <label for="input">Enter text with year numbers or dates:</label>
+    <textarea id="input"></textarea>
+
+    <label for="output">Converted output:</label>
+    <textarea id="output" readonly></textarea>
+    
+    <p>Abbreviation guide:
+    <br>
+    Moon Landing Calendar:
+    <br>
+    AFL - After First Landing
+    <br>
+    BFL - Before First Landing
+    <br><br>
+    American Independence Calendar:
+    <br>
+    AE - American Era
+    <br>
+    BDI - Before Declaration of Independence
+    <br><br>
+    Spaceflight Calendar:
+    <br>
+    STE - Spacetravel Era
+    <br>
+    BST - Before Spacetravel</p>
+  </div>
+
+  <script>
+    const input = document.getElementById("input");
+    const output = document.getElementById("output");
+    const calendarSelect = document.getElementById("calendar-select");
+
+    const calendars = {
+      moon: {
+        anchor: 1969,
+        afterAbbr: "AFL",
+        beforeAbbr: "BFL",
+        aliases: ["AFL", "BFL"]
+      },
+      american: {
+        anchor: 1776,
+        afterAbbr: "AE",
+        beforeAbbr: "BDI",
+        aliases: ["AE", "BDI", "ADI"]
+      },
+      spaceflight: {
+        anchor: 1961,
+        afterAbbr: "STE",
+        beforeAbbr: "BST",
+        aliases: ["STE", "BST"]
+      }
+    };
+
+    const monthNames = [
+      "January", "February", "March", "April", "May", "June",
+      "July", "August", "September", "October", "November", "December"
+    ];
+
+    function convertGregorianToSelected(yearNum, cfg) {
+      const diff = yearNum - cfg.anchor;
+      if (diff === 0) return `0 ${cfg.afterAbbr}`;
+      if (diff > 0) return `${diff} ${cfg.afterAbbr}`;
+      return `${Math.abs(diff)} ${cfg.beforeAbbr}`;
+    }
+
+    function convertGregorianToSelectedDecade(yearNum, cfg) {
+      const diff = yearNum - cfg.anchor;
+      const suffix = diff >= 0 ? cfg.afterAbbr : cfg.beforeAbbr;
+      const decade = Math.floor(Math.abs(diff) / 10) * 10;
+      return `${decade}'s ${suffix}`;
+    }
+
+    function gregorianFromCustomYear(num, abbr) {
+      if (abbr === "AFL") return 1969 + num;
+      if (abbr === "BFL") return 1969 - num;
+
+      if (abbr === "AE" || abbr === "ADI") return 1776 + num;
+      if (abbr === "BDI") return 1776 - num;
+
+      if (abbr === "STE") return 1961 + num;
+      if (abbr === "BST") return 1961 - num;
+
+      return NaN;
+    }
+
+    function normalizeCustomYearsToGregorian(text) {
+      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST)\b/g, (match, num, abbr) => {
+        const gregorianYear = gregorianFromCustomYear(parseInt(num, 10), abbr);
+        return Number.isNaN(gregorianYear) ? match : String(gregorianYear);
+      });
+    }
+
+    function convertText(text, cfg) {
+      let result = normalizeCustomYearsToGregorian(text);
+
+      const monthPattern = monthNames.join("|");
+
+      result = result.replace(
+        new RegExp(`\\b(${monthPattern})\\s+(\\d{1,2}),\\s*(\\d{4})\\b`, "g"),
+        (match, month, day, year) => `${month} ${day}, ${convertGregorianToSelected(parseInt(year, 10), cfg)}`
+      );
+
+      result = result.replace(
+        new RegExp(`\\b(${monthPattern})\\s+(\\d{1,2})\\s+(\\d{4})\\b`, "g"),
+        (match, month, day, year) => `${month} ${day} ${convertGregorianToSelected(parseInt(year, 10), cfg)}`
+      );
+
+      result = result.replace(
+        /\b([1-3]\d{3})'s\b/g,
+        (match, year) => {
+          const startYear = parseInt(year, 10);
+          const endYear = startYear + 9;
+
+          const first = convertGregorianToSelectedDecade(startYear, cfg);
+          const second = convertGregorianToSelectedDecade(endYear, cfg);
+
+          return first === second ? first : `${first}/${second}`;
+        }
+      );
+
+      result = result.replace(
+        /'(\d{2})\b/g,
+        (match, yy) => {
+          const n = parseInt(yy, 10);
+          const fullYear = (n >= 30 && n <= 99) ? (1900 + n) : (2000 + n);
+          return String(fullYear);
+        }
+      );
+
+      result = result.replace(
+        /\b([1-3]\d{3})\b/g,
+        match => convertGregorianToSelected(parseInt(match, 10), cfg)
+      );
+
+      return result;
+    }
+
+    function updateOutput() {
+      const calendarKey = calendarSelect.value;
+      const cfg = calendars[calendarKey];
+
+      if (!cfg) {
+        output.value = input.value;
+        return;
+      }
+
+      output.value = convertText(input.value, cfg);
+    }
+
+    input.addEventListener("input", updateOutput);
+    calendarSelect.addEventListener("change", updateOutput);
+  </script>
+</body>
+</html>
