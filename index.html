@@ -66,7 +66,7 @@
     <br><br>
     American Independence Calendar:
     <br>
-    BDI - Before Declaration of Independence
+    BI - Before Independence
     <br>
     AE - American Era
     <br><br>
@@ -104,8 +104,8 @@
       american: {
         anchor: 1776,
         afterAbbr: "AE",
-        beforeAbbr: "BDI",
-        aliases: ["AE", "BDI", "ADI"]
+        beforeAbbr: "BI",
+        aliases: ["AE", "BI"]
       },
       spaceflight: {
         anchor: 1961,
@@ -151,7 +151,7 @@
       if (abbr === "BFL") return 1969 - num;
 
       if (abbr === "AE" || abbr === "ADI") return 1776 + num;
-      if (abbr === "BDI") return 1776 - num;
+      if (abbr === "BI") return 1776 - num;
 
       if (abbr === "STE") return 1961 + num;
       if (abbr === "BST") return 1961 - num;
@@ -166,7 +166,7 @@
     }
 
     function normalizeCustomYearsToGregorian(text) {
-      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BDI|ADI|STE|BST|NA|BND|PCA|BD)\b/g, (match, num, abbr) => {
+      return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BI|ADI|STE|BST|NA|BND|PCA|BD)\b/g, (match, num, abbr) => {
         const gregorianYear = gregorianFromCustomYear(parseInt(num, 10), abbr);
         return Number.isNaN(gregorianYear) ? match : String(gregorianYear);
       });
