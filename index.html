@@ -48,6 +48,7 @@
       <option value="spaceflight">Spaceflight Calendar</option>
       <option value="neptune">Neptune Discovery Calendar</option>
       <option value="proximacentauri">Proxima Centauri Discovery Calendar</option>
+      <option value="pluto">Pluto Discovery Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -86,7 +87,15 @@
     <br>
     BD - Before Discovery
     <br>
-    PCA - Proxima Centauri Awareness</p>
+    PCA - Proxima Centauri Awareness
+    <br><br>
+    Pluto Discovery Calendar:
+    <br>
+    BPD - Before Pluto Discovery
+    <br>
+    PAP - Pluto As A Planet
+    <br>
+    PNP - Pluto Not A Planet</p>
   </div>
 
   <script>
@@ -99,7 +108,8 @@
     american: { anchor: 1776, afterAbbr: "AE", beforeAbbr: "BI" },
     spaceflight: { anchor: 1961, afterAbbr: "STE", beforeAbbr: "BST" },
     neptune: { anchor: 1846, afterAbbr: "NA", beforeAbbr: "BND" },
-    proximacentauri: { anchor: 1915, afterAbbr: "PCA", beforeAbbr: "BD" }
+    proximacentauri: { anchor: 1915, afterAbbr: "PCA", beforeAbbr: "BD" },
+    pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 }
   };
 
   const monthNames = [
@@ -108,6 +118,12 @@
   ];
 
   function convertGregorianToSelected(yearNum, cfg) {
+    if (cfg.switchYear) {
+      if (yearNum < cfg.anchor) return `${Math.abs(yearNum - cfg.anchor)} ${cfg.beforeAbbr}`;
+      if (yearNum < cfg.switchYear) return `${yearNum - cfg.anchor} ${cfg.afterAbbr}`;
+      return `${yearNum - (cfg.switchYear - 1)} PNP`;
+    }
+
     const diff = yearNum - cfg.anchor;
     if (diff === 0) return `0 ${cfg.afterAbbr}`;
     if (diff > 0) return `${diff} ${cfg.afterAbbr}`;
@@ -115,6 +131,22 @@
   }
 
   function convertGregorianToSelectedDecade(yearNum, cfg) {
+    if (cfg.switchYear) {
+      let diff, suffix;
+      if (yearNum < cfg.anchor) {
+        diff = cfg.anchor - yearNum;
+        suffix = cfg.beforeAbbr;
+      } else if (yearNum < cfg.switchYear) {
+        diff = yearNum - cfg.anchor;
+        suffix = cfg.afterAbbr;
+      } else {
+        diff = yearNum - (cfg.switchYear - 1);
+        suffix = "PNP";
+      }
+      const decade = Math.floor(Math.abs(diff) / 10) * 10;
+      return `${decade}'s ${suffix}`;
+    }
+
     const diff = yearNum - cfg.anchor;
     const suffix = diff >= 0 ? cfg.afterAbbr : cfg.beforeAbbr;
     const decade = Math.floor(Math.abs(diff) / 10) * 10;
@@ -137,11 +169,15 @@
     if (abbr === "PCA") return 1915 + num;
     if (abbr === "BD") return 1915 - num;
 
+    if (abbr === "PAP") return 1930 + num;
+    if (abbr === "BPD") return 1930 - num;
+    if (abbr === "PNP") return 2006 + num;
+
     return NaN;
   }
 
   function normalizeCustomYearsToGregorian(text) {
-    return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BI|ADI|STE|BST|NA|BND|PCA|BD)\b/g,
+    return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BI|ADI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP)\b/g,
       (match, num, abbr) => {
         const g = gregorianFromCustomYear(parseInt(num, 10), abbr);
         return Number.isNaN(g) ? match : String(g);
@@ -154,7 +190,6 @@
 
     const yearNum = parseInt(cleaned, 10);
 
-    // allow up to 4 digits now
     if (yearNum < 1 || yearNum > 9999) return NaN;
 
     if (era === "AD") return yearNum;
@@ -167,7 +202,6 @@
     let result = normalizeCustomYearsToGregorian(text);
     const monthPattern = monthNames.join("|");
 
-    // UPDATED: allow 1–4 digit AD
     result = result.replace(
       /\b([1-9]\d{0,3})\s+AD\b/g,
       (m, y) => {
@@ -176,7 +210,6 @@
       }
     );
 
-    // UPDATED: allow 1–4 digit BC
     result = result.replace(
       /\b([1-9]\d{0,3})\s+BC\b/g,
       (m, y) => {
@@ -216,9 +249,8 @@
       }
     );
 
-    // prevent double conversion
     result = result.replace(
-      /\b([1-3]\d{3})(?!\s*(AFL|BFL|AE|BI|STE|BST|NA|BND|PCA|BD))\b/g,
+      /\b([1-3]\d{3})(?!\s*(AFL|BFL|AE|BI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP))\b/g,
       m => convertGregorianToSelected(parseInt(m, 10), cfg)
     );
 
@@ -226,9 +258,9 @@
   }
 
   function updateOutput() {
-    const cfg = calendars[calendarSelect.value];
-    output.value = cfg ? convertText(input.value, cfg) : input.value;
-  }
+  const cfg = calendars[calendarSelect.value];
+  output.value = cfg ? convertText(input.value, cfg) : normalizeCustomYearsToGregorian(input.value);
+}
 
   input.addEventListener("input", updateOutput);
   calendarSelect.addEventListener("change", updateOutput);
