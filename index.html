@@ -49,6 +49,7 @@
       <option value="neptune">Neptune Discovery Calendar</option>
       <option value="proximacentauri">Proxima Centauri Discovery Calendar</option>
       <option value="pluto">Pluto Discovery Calendar</option>
+      <option value="dinosaur">Dinosaur Knowledge Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -96,6 +97,12 @@
     PAP - Pluto As A Planet
     <br>
     PNP - Pluto Not A Planet</p>
+    <br><br>
+    Dinosaur Knowledge Calendar:
+    <br>
+    BDK - Before Dinosaur Knowledge
+    <br>
+    DA - Dinosaur Age
   </div>
 
   <script>
@@ -109,7 +116,8 @@
     spaceflight: { anchor: 1961, afterAbbr: "STE", beforeAbbr: "BST" },
     neptune: { anchor: 1846, afterAbbr: "NA", beforeAbbr: "BND" },
     proximacentauri: { anchor: 1915, afterAbbr: "PCA", beforeAbbr: "BD" },
-    pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 }
+    pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 },
+    dinosaur: { anchor: 1824, afterAbbr: "BDK", beforeAbbr: "DA" }
   };
 
   const monthNames = [
@@ -173,11 +181,14 @@
     if (abbr === "BPD") return 1930 - num;
     if (abbr === "PNP") return 2006 + num;
 
+    if (abbr === "BDK") return 1824 + num;
+    if (abbr === "DA") return 1824 - num;
+
     return NaN;
   }
 
   function normalizeCustomYearsToGregorian(text) {
-    return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BI|ADI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP)\b/g,
+    return text.replace(/\b(\d+)\s*(AFL|BFL|AE|BI|ADI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP|BDK|DA)\b/g,
       (match, num, abbr) => {
         const g = gregorianFromCustomYear(parseInt(num, 10), abbr);
         return Number.isNaN(g) ? match : String(g);
@@ -250,7 +261,7 @@
     );
 
     result = result.replace(
-      /\b([1-3]\d{3})(?!\s*(AFL|BFL|AE|BI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP))\b/g,
+      /\b([1-3]\d{3})(?!\s*(AFL|BFL|AE|BI|STE|BST|NA|BND|PCA|BD|PAP|BPD|PNP|BDK|DA))\b/g,
       m => convertGregorianToSelected(parseInt(m, 10), cfg)
     );
 
