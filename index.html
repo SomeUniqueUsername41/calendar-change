@@ -50,6 +50,7 @@
       <option value="proximacentauri">Proxima Centauri Discovery Calendar</option>
       <option value="pluto">Pluto Discovery Calendar</option>
       <option value="dinosaur">Dinosaur Knowledge Calendar</option>
+      <option value="movie">Motion Picture Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -102,7 +103,13 @@
     <br>
     BDK - Before Dinosaur Knowledge
     <br>
-    DA - Dinosaur Age</p>
+    DA - Dinosaur Age
+    <br><br>
+    Motion Picture Calendar:
+    <br>
+    BMP - Before Motion Pictures
+    <br>
+    MPA - Motion Picture Age</p>
   </div>
 
   <script>
@@ -117,7 +124,8 @@
     neptune: { anchor: 1846, afterAbbr: "NA", beforeAbbr: "BND" },
     proximacentauri: { anchor: 1915, afterAbbr: "PCA", beforeAbbr: "BD" },
     pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 },
-    dinosaur: { anchor: 1824, afterAbbr: "BDK", beforeAbbr: "DA" }
+    dinosaur: { anchor: 1824, afterAbbr: "BDK", beforeAbbr: "DA" },
+    movie: { anchor: 1889, afterAbbr: "MPA", beforeAbbr: "BMP" },
   };
 
   const monthNames = [
@@ -183,6 +191,9 @@
 
     if (abbr === "BDK") return 1824 + num;
     if (abbr === "DA") return 1824 - num;
+
+    if (abbr === "MPA") return 1889 + num;
+    if (abbr === "BMP") return 1889 - num;
 
     return NaN;
   }
