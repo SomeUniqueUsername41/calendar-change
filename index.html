@@ -52,6 +52,8 @@
       <option value="dinosaur">Dinosaur Knowledge Calendar</option>
       <option value="movie">Motion Picture Calendar</option>
       <option value="music">Recorded Music Calendar</option>
+      <option value="electricity">Electricity Age Calendar</option>
+      <option value="automobile">Automobile Age Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -116,7 +118,19 @@
     <br>
     BRM - Before Recorded Music
     <br>
-    RMA - Recorded Music Age</p>
+    RMA - Recorded Music Age
+    <br><br>
+    Electricity Age Calendar:
+    <br>
+    BEA - Before Electricity Age
+    <br>
+    EA - Electricity Age
+    <br><br>
+    Automobile Age Calendar:
+    <br>
+    BAA - Before Automobile Age
+    <br>
+    AA - Automobile Age</p>
   </div>
 
   <script>
@@ -133,7 +147,9 @@
     pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 },
     dinosaur: { anchor: 1824, afterAbbr: "DA", beforeAbbr: "BDK" },
     movie: { anchor: 1889, afterAbbr: "MPA", beforeAbbr: "BMP" },
-    music: { anchor: 1877, afterAbbr: "RMA", beforeAbbr: "BRM" }
+    music: { anchor: 1877, afterAbbr: "RMA", beforeAbbr: "BRM" },
+    electricity: { anchor: 1882, afterAbbr: "EA", beforeAbbr: "BEA" },
+    automobile: { anchor: 1886, afterAbbr: "AA", beforeAbbr: "BAA" }
   };
 
   const monthNames = [
@@ -205,6 +221,12 @@
 
     if (abbr === "RMA") return 1877 + num;
     if (abbr === "BRM") return 1877 - num;
+
+    if (abbr === "EA") return 1882 + num;
+    if (abbr === "BEA") return 1882 - num;
+
+    if (abbr === "AA") return 1886 + num;
+    if (abbr === "BAA") return 1886 - num;
 
     return NaN;
   }
