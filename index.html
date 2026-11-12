@@ -51,6 +51,7 @@
       <option value="pluto">Pluto Discovery Calendar</option>
       <option value="dinosaur">Dinosaur Knowledge Calendar</option>
       <option value="movie">Motion Picture Calendar</option>
+      <option value="music">Recorded Music Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -109,7 +110,13 @@
     <br>
     BMP - Before Motion Pictures
     <br>
-    MPA - Motion Picture Age</p>
+    MPA - Motion Picture Age
+    <br><br>
+    Recorded Music Calendar:
+    <br>
+    BRM - Before Recorded Music
+    <br>
+    RMA - Recorded Music Age</p>
   </div>
 
   <script>
@@ -126,6 +133,7 @@
     pluto: { anchor: 1930, afterAbbr: "PAP", beforeAbbr: "BPD", switchYear: 2007 },
     dinosaur: { anchor: 1824, afterAbbr: "BDK", beforeAbbr: "DA" },
     movie: { anchor: 1889, afterAbbr: "MPA", beforeAbbr: "BMP" },
+    music: { anchor: 1877, afterAbbr: "RMA", beforeAbbr: "BRM" }
   };
 
   const monthNames = [
@@ -194,6 +202,9 @@
 
     if (abbr === "MPA") return 1889 + num;
     if (abbr === "BMP") return 1889 - num;
+
+    if (abbr === "RMA") return 1877 + num;
+    if (abbr === "BRM") return 1877 - num;
 
     return NaN;
   }
