@@ -54,6 +54,7 @@
       <option value="music">Recorded Music Calendar</option>
       <option value="electricity">Electricity Age Calendar</option>
       <option value="automobile">Automobile Age Calendar</option>
+      <option value="soda">Soda Calendar</option>
     </select>
 
     <label for="input">Enter text with year numbers and/or dates:</label>
@@ -130,7 +131,13 @@
     <br>
     BAA - Before Automobile Age
     <br>
-    AA - Automobile Age</p>
+    AA - Automobile Age
+    <br><br>
+    Soda Calendar:
+    <br>
+    PSC - Pre-Soda Creation
+    <br>
+    SC - Soda Consumption</p>
   </div>
 
   <script>
@@ -149,7 +156,8 @@
     movie: { anchor: 1889, afterAbbr: "MPA", beforeAbbr: "BMP" },
     music: { anchor: 1877, afterAbbr: "RMA", beforeAbbr: "BRM" },
     electricity: { anchor: 1882, afterAbbr: "EA", beforeAbbr: "BEA" },
-    automobile: { anchor: 1886, afterAbbr: "AA", beforeAbbr: "BAA" }
+    automobile: { anchor: 1886, afterAbbr: "AA", beforeAbbr: "BAA" },
+    soda: { anchor: 1807, afterAbbr: "SC", beforeAbbr: "PSC" }
   };
 
   const monthNames = [
@@ -227,6 +235,9 @@
 
     if (abbr === "AA") return 1886 + num;
     if (abbr === "BAA") return 1886 - num;
+
+    if (abbr === "SC") return 1807 + num;
+    if (abbr === "PSC") return 1807 - num;
 
     return NaN;
   }
